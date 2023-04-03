@@ -13,14 +13,21 @@ from dotenv import load_dotenv  # pip install python-dotenv
 from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
 from email.mime.text import MIMEText
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.application import MIMEApplication
+from io import StringIO
 
 
 
 def get_data():
     url = 'https://www.ebay.co.uk/sch/i.html?_dcat=22610&_fsrp=1&_from=R40&_nkw=jvc+projector&_sacat=0&LH_PrefLoc=2&LH_ItemCondition=3000&_udhi=200&_sop=15&rt=nc&LH_BIN=1'
+    url_2 = 'https://www.ebay.co.uk/sch/i.html?_dcat=22610&_fsrp=1&_from=R40&_nkw=jvc+projector&_sacat=0&LH_PrefLoc=2&LH_ItemCondition=3000&_udhi=200&LH_Auction=1&_sop=1'
+    r_2 = requests.get(url_2)
     r = requests.get(url)
     soup = BeautifulSoup(r.text, 'html.parser')
-    return soup
+    soup_2 = BeautifulSoup(r_2.text, 'html.parser')
+    return soup, soup_2
 
 def parse(soup):
     productslist = []
@@ -29,22 +36,69 @@ def parse(soup):
         product = {
             'title': item.find('div', {'class': 's-item__title'}).text,
             'price': float((item.find('span', {'class': 's-item__price'}).text)[1:]),
-            'best offer': item.find_all_next('div', {'class': 's-item__detail s-item__detail--primary'})[1].text
+            'type': item.find_all_next('div', {'class': 's-item__detail s-item__detail--primary'})[1].text
             # 'solddate': item.find('span', {'class': 's-item__title--tagblock__COMPLETED'}).find('span', {'class':'POSITIVE'}).text
         }
         productslist.append(product)
     return productslist
 
-def output(productslist):
-    productsdf =  pd.DataFrame(productslist)
-    productsdf.to_csv('C:/Users/liamc/Coding Projects/Ebay JVC/output.csv.gzip', compression='gzip', index=False)
-    productsdf.to_csv('C:/Users/liamc/Coding Projects/Ebay JVC/output.csv', index=False)
+def output_1(productslist):
+    productsdf =  pd.DataFrame(productslist[1:])
+    productsdf.to_csv('C:/Users/liamc/Coding Projects/Ebay JVC/output_offer.csv', index=False)
     print('Saved to CSV')
     return
 
-soup = get_data()
+def output_2(productslist):
+    productsdf =  pd.DataFrame(productslist[1:])
+    productsdf.to_csv('C:/Users/liamc/Coding Projects/Ebay JVC/output_auction.csv', index=False)
+    print('Saved to CSV')
+    return
+
+
+def df_combiner(product_list_offer, product_list_auction):
+    # joining the offer and auction dfs
+    offer_df = pd.DataFrame(product_list_offer[1:])
+    auction_df = pd.DataFrame(product_list_auction[1:])
+    auction_df['type'] = 'auction'
+    joined = pd.concat([auction_df, offer_df])
+    print(len(joined))
+    # # adding ID column
+    # joined = joined.reset_index()
+    # joined['ID'] = joined.index + 1
+    # joined = joined.drop('index', axis = 1)
+    # # filtering the dataframe based on type
+    joined = joined[~((joined['type'] == 'Buy it now') & (joined['price'] > 175))]
+    joined = joined[~((joined['type'] == 'or Best Offer') & (joined['price'] > 200))]
+    print(len(joined))
+    joined.to_csv('C:/Users/liamc/Coding Projects/Ebay JVC/new_df.csv', index=False)
+    print('combiner run successfully')
+    return
+
+
+
+def final_df_creator(old, new):
+    merged = old.merge(new, how='outer', indicator=True)
+    unique_df2 = merged[merged['_merge'] == 'right_only'].drop(columns='_merge')
+    # df_combined = pd.concat([df1, df2]).drop_duplicates(keep=False)
+    return unique_df2
+
+
+
+soup = get_data()[0]
 productslist = parse(soup)
-output(productslist)
+output_1(productslist)
+soup_2 = get_data()[1]
+productslist_2 = parse(soup_2)
+output_2(productslist_2)
+
+df_combiner(productslist, productslist_2)
+
+# saving the original dataframe and the one to compare to
+
+old_df = pd.read_csv('old_df.csv')
+new_df = pd.read_csv('new_df.csv')
+
+
 
 
 
@@ -60,38 +114,84 @@ load_dotenv(envars)
 sender_email = os.getenv("EMAIL")
 password_email = os.getenv("PASSWORD")
 
+textStream = StringIO()
+# df.to_csv(textStream,index=False)
 
-def send_email():
+
+#
+def send_email(old_df, new_df):
     # Create the base text message.
-    msg = EmailMessage()
+    msg = MIMEMultipart()
+    # msg.attach(MIMEApplication(textStream.getvalue(), Name=filename))
     msg["Subject"] = "List of JVC's"
     msg["From"] = sender_email
     msg["To"] = sender_email
-    with open('output.csv.gzip', 'rb') as file:
-        # Attach the file with filename to the email
-        msg.attach(MIMEApplication(file.read(), Name='output.csv.gzip'))
+    msg.attach(MIMEText("Here's the list of JVC's"))
+    # with open("new_df.csv", "rb") as f:
+    #     attached_file = MIMEApplication(f.read(), _subtype="csv")
+    #     attached_file.add_header(
+    #         "content-disposition",
+    #         "attachment",
+    #         filename="JVC_list.csv",
+    #     )
+    #     msg.attach(attached_file)
+    # # msg.set_content(
+    # #     f"""\
+    # #     Here's the latest JVC's.
+    # #     """
+    # # )
+    if len(old_df) == len(new_df):
+        old_df = old_df
+        new_df=new_df
+        with smtplib.SMTP(EMAIL_SERVER, PORT) as server:
+            server.starttls()
+            server.login(sender_email, password_email)
+            server.sendmail(sender_email, sender_email, msg.as_string())
 
-    msg.set_content(
-        f"""\
-        Here's the latest JVC's.
-        """
-    )
 
-    with smtplib.SMTP(EMAIL_SERVER, PORT) as server:
-        server.starttls()
-        server.login(sender_email, password_email)
-        server.sendmail(sender_email, sender_email, msg.as_string())
+    # setting conditions under which to send email
+    elif (len(old_df) != len(new_df)):
+        output_df = final_df_creator(old_df, new_df)
+        output_df.to_csv('C:/Users/liamc/Coding Projects/Ebay JVC/new_df.csv', index=False)
+        old_df = new_df
+        new_df = output_df
+        old_df.to_csv('C:/Users/liamc/Coding Projects/Ebay JVC/old_df.csv', index=False)
+        with open("new_df.csv", "rb") as f:
+            attached_file = MIMEApplication(f.read(), _subtype="csv")
+            attached_file.add_header(
+                "content-disposition",
+                "attachment",
+                filename="JVC_list.csv",
+            )
+            msg.attach(attached_file)
+        # msg.set_content(
+        #     f"""\
+        #     Here's the latest JVC's.
+        #     """
+        # )
+        with smtplib.SMTP(EMAIL_SERVER, PORT) as server:
+            server.starttls()
+            server.login(sender_email, password_email)
+            server.sendmail(sender_email, sender_email, msg.as_string())
+            server.sendmail(sender_email, sender_email, msg.as_string())
+
+    return
 
 
 
+send_email(old_df, new_df)
 
-def send_emails():
-    df = pd.read_csv('output.csv')
-    df =df[df['best offer'] == 'or Best Offer']
-    if len(df) > 1:
-        send_email()
+# old_df = sender_email(old_df)
+# new_df = sender_email(new_df)
 
-send_emails()
+
+# def send_emails():
+#     df = pd.read_csv('old_df.csv')
+#     df = df[df['best offer'] == 'or Best Offer']
+#     if len(df) > 1:
+#         send_email()
+#
+# send_emails()
 
 
 
