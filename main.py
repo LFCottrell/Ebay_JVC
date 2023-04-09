@@ -22,7 +22,7 @@ from io import StringIO
 
 def get_data():
     url = 'https://www.ebay.co.uk/sch/i.html?_dcat=22610&_fsrp=1&_from=R40&_nkw=jvc+projector&_sacat=0&LH_PrefLoc=2&LH_ItemCondition=3000&_udhi=200&_sop=15&rt=nc&LH_BIN=1'
-    url_2 = 'https://www.ebay.co.uk/sch/i.html?_dcat=22610&_fsrp=1&_from=R40&_nkw=jvc+projector&_sacat=0&LH_PrefLoc=2&LH_ItemCondition=3000&_udhi=200&LH_Auction=1&_sop=1'
+    url_2 = 'https://www.ebay.co.uk/sch/i.html?_from=R40&_nkw=jvc%20projector&_sacat=0&LH_TitleDesc=0&_fsrp=1&LH_Auction=1&_dcat=22610&_sop=1&LH_PrefLoc=2&LH_ItemCondition=3000&rt=nc'
     r_2 = requests.get(url_2)
     r = requests.get(url)
     soup = BeautifulSoup(r.text, 'html.parser')
@@ -35,7 +35,7 @@ def parse(soup):
     for item in results:
         product = {
             'title': item.find('div', {'class': 's-item__title'}).text,
-            'price': float((item.find('span', {'class': 's-item__price'}).text)[1:]),
+            'price': float((item.find('span', {'class': 's-item__price'}).text.replace(',', ''))[1:]),
             'type': item.find_all_next('div', {'class': 's-item__detail s-item__detail--primary'})[1].text
             # 'solddate': item.find('span', {'class': 's-item__title--tagblock__COMPLETED'}).find('span', {'class':'POSITIVE'}).text
         }
@@ -69,6 +69,7 @@ def df_combiner(product_list_offer, product_list_auction):
     # # filtering the dataframe based on type
     joined = joined[~((joined['type'] == 'Buy it now') & (joined['price'] > 175))]
     joined = joined[~((joined['type'] == 'or Best Offer') & (joined['price'] > 200))]
+    joined = joined[~((joined['type'] == 'auction') & (joined['price'] > 175))]
     print(len(joined))
     joined.to_csv('C:/Users/liamc/Coding Projects/Ebay JVC/new_df.csv', index=False)
     print('combiner run successfully')
