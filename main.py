@@ -115,8 +115,6 @@ EMAIL_SERVER = "smtp-mail.outlook.com"  # Adjust server address, if you are not 
 sender_email = os.environ['USER_EMAIL']
 password_email = os.environ['USER_PASSWORD']
 
-sender_email = 'liamcottrell1996@hotmail.co.uk'
-password_email = 'Pitshanger'
 
 print(sender_email, password_email)
 print("hello")
