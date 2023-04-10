@@ -103,7 +103,7 @@ new_df = pd.read_csv('new_df.csv')
 
 
 
-PORT = 587
+PORT = 465
 EMAIL_SERVER = "smtp.office365.com"  # Adjust server address, if you are not using @outlook
 
 # # Load the environment variables
