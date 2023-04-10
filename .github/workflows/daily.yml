@@ -16,7 +16,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: 3.x
 
       - name: Install dependencies
         run: |
@@ -24,6 +24,9 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run daily script
+        env:
+          USER_EMAIL: ${{ secrets.USER_EMAIL }}
+          USER_PASSWORD: ${{ secrets.USER_PASSWORD }}  
         run: python main.py
         
 #       - name: send email
