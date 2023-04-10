@@ -103,104 +103,104 @@ new_df = pd.read_csv('new_df.csv')
 
 
 
-# PORT = 465
-# EMAIL_SERVER = "smtp.office365.com"  # Adjust server address, if you are not using @outlook
+PORT = 587
+EMAIL_SERVER = "smtp.office365.com"  # Adjust server address, if you are not using @outlook
 
-# # # Load the environment variables
-# # current_dir = Path(__file__).resolve().parent if "__file__" in locals() else Path.cwd()
-# # envars = current_dir / ".env"
-# # load_dotenv(envars)
+# # Load the environment variables
+# current_dir = Path(__file__).resolve().parent if "__file__" in locals() else Path.cwd()
+# envars = current_dir / ".env"
+# load_dotenv(envars)
 
-# # # Read environment variables
-# # sender_email = os.getenv("EMAIL")
-# # password_email = os.getenv("PASSWORD")
+# Read environment variables
+sender_email = os.environ.get('USER_EMAIL')
+password_email = os.environ.get('USER_PASSWORD')
 
 # sender_email = "liamcottrell1996@hotmail.co.uk"
 # password_email = "Pitshanger"
 
-# textStream = StringIO()
-# # df.to_csv(textStream,index=False)
+textStream = StringIO()
+# df.to_csv(textStream,index=False)
 
 
-# #
-# def send_email(old_df, new_df):
-#     # Create the base text message.
-#     msg = MIMEMultipart()
-#     # msg.attach(MIMEApplication(textStream.getvalue(), Name=filename))
-#     msg["Subject"] = "List of JVC's"
-#     msg["From"] = sender_email
-#     msg["To"] = sender_email
-#     msg.attach(MIMEText("Here's the list of JVC's"))
-#     # with open("new_df.csv", "rb") as f:
-#     #     attached_file = MIMEApplication(f.read(), _subtype="csv")
-#     #     attached_file.add_header(
-#     #         "content-disposition",
-#     #         "attachment",
-#     #         filename="JVC_list.csv",
-#     #     )
-#     #     msg.attach(attached_file)
-#     # # msg.set_content(
-#     # #     f"""\
-#     # #     Here's the latest JVC's.
-#     # #     """
-#     # # )
-#     if len(old_df) == len(new_df):
-#         old_df = old_df
-#         new_df=new_df
-#         with smtplib.SMTP(EMAIL_SERVER, PORT) as server:
-#             server.starttls()
-#             server.login(sender_email, password_email)
-#             server.sendmail(sender_email, sender_email, msg.as_string())
+#
+def send_email(old_df, new_df):
+    # Create the base text message.
+    msg = MIMEMultipart()
+    # msg.attach(MIMEApplication(textStream.getvalue(), Name=filename))
+    msg["Subject"] = "List of JVC's"
+    msg["From"] = sender_email
+    msg["To"] = sender_email
+    msg.attach(MIMEText("Here's the list of JVC's"))
+    # with open("new_df.csv", "rb") as f:
+    #     attached_file = MIMEApplication(f.read(), _subtype="csv")
+    #     attached_file.add_header(
+    #         "content-disposition",
+    #         "attachment",
+    #         filename="JVC_list.csv",
+    #     )
+    #     msg.attach(attached_file)
+    # # msg.set_content(
+    # #     f"""\
+    # #     Here's the latest JVC's.
+    # #     """
+    # # )
+    if len(old_df) == len(new_df):
+        old_df = old_df
+        new_df=new_df
+        with smtplib.SMTP(EMAIL_SERVER, PORT) as server:
+            server.starttls()
+            server.login(sender_email, password_email)
+            server.sendmail(sender_email, sender_email, msg.as_string())
 
 
-#     # setting conditions under which to send email
-#     elif (len(old_df) != len(new_df)):
-#         output_df = final_df_creator(old_df, new_df)
-#         output_df.to_csv('./new_df.csv', index=False)
-#         old_df = new_df
-#         new_df = output_df
-#         old_df.to_csv('./old_df.csv', index=False)
-#         with open("new_df.csv", "rb") as f:
-#             attached_file = MIMEApplication(f.read(), _subtype="csv")
-#             attached_file.add_header(
-#                 "content-disposition",
-#                 "attachment",
-#                 filename="JVC_list.csv",
-#             )
-#             msg.attach(attached_file)
-#         # msg.set_content(
-#         #     f"""\
-#         #     Here's the latest JVC's.
-#         #     """
-#         # )
-#         with smtplib.SMTP(EMAIL_SERVER, PORT) as server:
-#             server.starttls()
-#             server.login(sender_email, password_email)
-#             server.sendmail(sender_email, sender_email, msg.as_string())
-#             server.sendmail(sender_email, sender_email, msg.as_string())
+    # setting conditions under which to send email
+    elif (len(old_df) != len(new_df)):
+        output_df = final_df_creator(old_df, new_df)
+        output_df.to_csv('./new_df.csv', index=False)
+        old_df = new_df
+        new_df = output_df
+        old_df.to_csv('./old_df.csv', index=False)
+        with open("new_df.csv", "rb") as f:
+            attached_file = MIMEApplication(f.read(), _subtype="csv")
+            attached_file.add_header(
+                "content-disposition",
+                "attachment",
+                filename="JVC_list.csv",
+            )
+            msg.attach(attached_file)
+        # msg.set_content(
+        #     f"""\
+        #     Here's the latest JVC's.
+        #     """
+        # )
+        with smtplib.SMTP(EMAIL_SERVER, PORT) as server:
+            server.starttls()
+            server.login(sender_email, password_email)
+            server.sendmail(sender_email, sender_email, msg.as_string())
+            server.sendmail(sender_email, sender_email, msg.as_string())
 
-#     return
-
-
-
-# send_email(old_df, new_df)
-
-# # old_df = sender_email(old_df)
-# # new_df = sender_email(new_df)
-
-
-# # def send_emails():
-# #     df = pd.read_csv('old_df.csv')
-# #     df = df[df['best offer'] == 'or Best Offer']
-# #     if len(df) > 1:
-# #         send_email()
-# #
-# # send_emails()
+    return
 
 
 
-# # @app.lib.cron()
-# # def cron_job(event):
-# #     df = load_df(URL)
-# #     result = query_data_and_send_emails(df)
-# #     return result
+send_email(old_df, new_df)
+
+# old_df = sender_email(old_df)
+# new_df = sender_email(new_df)
+
+
+# def send_emails():
+#     df = pd.read_csv('old_df.csv')
+#     df = df[df['best offer'] == 'or Best Offer']
+#     if len(df) > 1:
+#         send_email()
+#
+# send_emails()
+
+
+
+# @app.lib.cron()
+# def cron_job(event):
+#     df = load_df(URL)
+#     result = query_data_and_send_emails(df)
+#     return result
