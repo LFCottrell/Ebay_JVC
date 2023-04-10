@@ -116,6 +116,7 @@ sender_email = os.environ.get('USER_EMAIL')
 password_email = os.environ.get('USER_PASSWORD')
 
 print(sender_email, password_email)
+print("hello")
 
 
 textStream = StringIO()
