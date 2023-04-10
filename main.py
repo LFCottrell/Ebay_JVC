@@ -117,8 +117,6 @@ df_combiner(productslist, productslist_2)
 
 # print(sender_email, password_email)
 
-# # sender_email = "liamcottrell1996@hotmail.co.uk"
-# # password_email = "Pitshanger"
 
 # textStream = StringIO()
 # # df.to_csv(textStream,index=False)
