@@ -25,6 +25,20 @@ jobs:
 
       - name: Run daily script
         run: python main.py
+        
+      - name: send email
+        uses: dawidd6/action-send-mail@v2
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: CSV Report
+          body: Here are the latest JVCs.
+          from: Liam Cottrell <liamcottrell1996@hotmail.co.uk>
+          to: liamcottrell1996@hotmail.co.uk
+          attachments: |
+            ./new_df.csv
 
       - name: commit and push changes
         run: |
