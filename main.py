@@ -112,8 +112,8 @@ EMAIL_SERVER = "smtp-mail.outlook.com"  # Adjust server address, if you are not 
 # load_dotenv(envars)
 
 # Read environment variables
-sender_email = os.environ.get('USER_EMAIL')
-password_email = os.environ.get('USER_PASSWORD')
+sender_email = os.environ['USER_EMAIL']
+password_email = os.environ['USER_PASSWORD']
 
 print(sender_email, password_email)
 print("hello")
