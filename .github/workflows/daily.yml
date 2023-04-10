@@ -45,8 +45,6 @@ jobs:
 
       - name: commit and push changes
         run: |
-          git config --global user.name "liamcottrell1996@hotmail.co.uk"
-          git config --global user.name "LFCottrell"
           git add . 
           git commit -m "latest JVC run"
           git push
