@@ -44,13 +44,13 @@ def parse(soup):
 
 def output_1(productslist):
     productsdf =  pd.DataFrame(productslist[1:])
-    productsdf.to_csv('C:/Users/liamc/Coding Projects/Ebay JVC/output_offer.csv', index=False)
+    productsdf.to_csv('./output_offer.csv', index=False)
     print('Saved to CSV')
     return
 
 def output_2(productslist):
     productsdf =  pd.DataFrame(productslist[1:])
-    productsdf.to_csv('C:/Users/liamc/Coding Projects/Ebay JVC/output_auction.csv', index=False)
+    productsdf.to_csv('./output_auction.csv', index=False)
     print('Saved to CSV')
     return
 
@@ -71,7 +71,7 @@ def df_combiner(product_list_offer, product_list_auction):
     joined = joined[~((joined['type'] == 'or Best Offer') & (joined['price'] > 200))]
     joined = joined[~((joined['type'] == 'auction') & (joined['price'] > 175))]
     print(len(joined))
-    joined.to_csv('C:/Users/liamc/Coding Projects/Ebay JVC/new_df.csv', index=False)
+    joined.to_csv('./new_df.csv', index=False)
     print('combiner run successfully')
     return
 
@@ -153,10 +153,10 @@ def send_email(old_df, new_df):
     # setting conditions under which to send email
     elif (len(old_df) != len(new_df)):
         output_df = final_df_creator(old_df, new_df)
-        output_df.to_csv('C:/Users/liamc/Coding Projects/Ebay JVC/new_df.csv', index=False)
+        output_df.to_csv('./new_df.csv', index=False)
         old_df = new_df
         new_df = output_df
-        old_df.to_csv('C:/Users/liamc/Coding Projects/Ebay JVC/old_df.csv', index=False)
+        old_df.to_csv('./old_df.csv', index=False)
         with open("new_df.csv", "rb") as f:
             attached_file = MIMEApplication(f.read(), _subtype="csv")
             attached_file.add_header(
