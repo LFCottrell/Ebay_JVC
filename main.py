@@ -94,7 +94,7 @@ output_2(productslist_2)
 
 df_combiner(productslist, productslist_2)
 
-saving the original dataframe and the one to compare to
+# saving the original dataframe and the one to compare to
 
 old_df = pd.read_csv('old_df.csv')
 new_df = pd.read_csv('new_df.csv')
