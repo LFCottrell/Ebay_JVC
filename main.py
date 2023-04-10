@@ -106,14 +106,17 @@ new_df = pd.read_csv('new_df.csv')
 PORT = 587
 EMAIL_SERVER = "smtp-mail.outlook.com"  # Adjust server address, if you are not using @outlook
 
-# Load the environment variables
-current_dir = Path(__file__).resolve().parent if "__file__" in locals() else Path.cwd()
-envars = current_dir / ".env"
-load_dotenv(envars)
+# # Load the environment variables
+# current_dir = Path(__file__).resolve().parent if "__file__" in locals() else Path.cwd()
+# envars = current_dir / ".env"
+# load_dotenv(envars)
 
-# Read environment variables
-sender_email = os.getenv("EMAIL")
-password_email = os.getenv("PASSWORD")
+# # Read environment variables
+# sender_email = os.getenv("EMAIL")
+# password_email = os.getenv("PASSWORD")
+
+sender_email = "liamcottrell1996@hotmail.co.uk"
+password_email = "Pitshanger"
 
 textStream = StringIO()
 # df.to_csv(textStream,index=False)
