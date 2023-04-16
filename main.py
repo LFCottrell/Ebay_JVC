@@ -111,9 +111,12 @@ EMAIL_SERVER = "smtp.gmail.com"  # Adjust server address, if you are not using @
 # envars = current_dir / ".env"
 # load_dotenv(envars)
 
-# # Read environment variables
-sender_email = os.environ.get('GMAIL_EMAIL')
-password_email = os.environ.get('GMAIL_PASSWORD')
+# # # Read environment variables
+# sender_email = os.environ.get('GMAIL_EMAIL')
+# password_email = os.environ.get('GMAIL_PASSWORD')
+
+sender_email = 'holteh9@gmail.com'
+password_email='osptawseeawgcqgg'
 
 
 
