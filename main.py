@@ -115,8 +115,8 @@ EMAIL_SERVER = "smtp.gmail.com"  # Adjust server address, if you are not using @
 # sender_email = os.environ['USER_EMAIL']
 # password_email = os.environ['USER_PASSWORD']
 
-sender_email = holteh9@gmail.com
-sender_password = dvdettnrrrzjfqmo
+sender_email = 'holteh9@gmail.com'
+sender_password = 'dvdettnrrrzjfqmo'
 
 
 print(sender_email, password_email)
