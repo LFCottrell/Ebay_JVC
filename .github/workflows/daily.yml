@@ -26,8 +26,8 @@ jobs:
 
       - name: Run daily script
         env:
-          USER_EMAIL: ${{ secrets.GMAIL_EMAIL }}
-          USER_PASSWORD: ${{ secrets.GMAIL_PASSWORD }}  
+          EMAIL: ${{ secrets.EMAIL }}
+          PASSWORD: ${{ secrets.PASSWORD }}  
         run: python main.py
         
 #       - name: send email
