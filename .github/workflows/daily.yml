@@ -23,15 +23,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           
-      - name: Print Secrets
-        run: |
-          echo "My Secret Key 1: ${{ secrets.USER_EMAIL }}"
-          echo "My Secret Key 2: ${{ secrets.USER_PASSWORD }}"
 
       - name: Run daily script
         env:
-          USER_EMAIL: ${{ secrets.USER_EMAIL }}
-          USER_PASSWORD: ${{ secrets.USER_PASSWORD }}  
+          USER_EMAIL: ${{ secrets.GMAIL_EMAIL }}
+          USER_PASSWORD: ${{ secrets.GMAIL_PASSWORD }}  
         run: python main.py
         
 #       - name: send email
