@@ -112,11 +112,8 @@ EMAIL_SERVER = "smtp.office365.com"  # Adjust server address, if you are not usi
 # load_dotenv(envars)
 
 # # Read environment variables
-# sender_email = os.environ['USER_EMAIL']
-# password_email = os.environ['USER_PASSWORD']
-
-sender_email = 'liamcottrell1996@hotmail.co.uk'
-password_email = 'Pitshanger'
+sender_email = os.environ['USER_EMAIL']
+password_email = os.environ['USER_PASSWORD']
 
 
 print(sender_email, password_email)
